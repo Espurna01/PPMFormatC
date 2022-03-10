@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1646847545 source:c:\proyectos propios\ppmformat\main.c
+1646906021 source:c:\proyectos propios\ppmformat\main.c
 	<stdio.h>
 	<stdlib.h>
 	<time.h>
