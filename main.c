@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #define MAXRGB 256
-#define MINSLICES 2
+#define MINSLICES 10
 #define PI 3.141592
 
 void savePPMConcentricSquares(char *filename, int size){
@@ -39,12 +39,12 @@ void savePPMConcentricSquares(char *filename, int size){
     fclose(file);
 }
 
-int savePPMMultipleConcentricSquares(char *filename, int size){
+int savePPMMultipleConcentricSquares(char *filename, int size, int offset){
 
     int slices = MINSLICES;
     while(size % slices != 0 && slices < size)
         slices++;
-    if(size == slices) return -1;
+    if(size == slices || offset == 0) return -1;
     int nColors = size / 2 / slices;
 
     FILE *file = fopen(filename, "wb");
@@ -77,7 +77,15 @@ int savePPMMultipleConcentricSquares(char *filename, int size){
                 i != (size/slices * (pos / slices + 1) - 1 - depth) && j != size / slices * (pos % slices + 1) - 1 - depth){
                 depth++;
             }
-            if(pos % 2 == 0){
+            int posi = pos / slices;
+            int posj = pos % slices;
+            int depthdepth = 0;
+            while(posi != depthdepth && posj != depthdepth &&
+                  posi != slices - depthdepth - 1 && posj != slices - depthdepth - 1){
+                depthdepth++;
+            }
+
+            if(depthdepth % offset == 0){
                 fwrite(&R[depth], 1, 1, file);
                 fwrite(&G[depth], 1, 1, file);
                 fwrite(&B[depth], 1, 1, file);
@@ -196,7 +204,7 @@ int savePPMMultipleX(char *filename, int size){
     if(file == NULL)
         return -1;
 
-    int nColors = size*size;
+    int nColors = slices * slices;
 
     char R[nColors];
     for(int i = 0; i < nColors;i++)
@@ -221,12 +229,12 @@ int savePPMMultipleX(char *filename, int size){
             }
             int vali = i - sizeDivSlices * (pos/slices);
             int valj = j - sizeDivSlices * (pos%slices);
-            if(vali == valj || sizeDivSlices * (pos%slices + 1) - valj - 1 == vali || sizeDivSlices * (pos/slices + 1) - 1 - vali == valj){
+            if(vali == valj || size/slices - valj - 1 == vali){
                 fwrite(&R[pos], 1, 1, file);
                 fwrite(&G[pos], 1, 1, file);
                 fwrite(&B[pos], 1, 1, file);
             }else{
-                char a = 255;
+                char a = (char)255;
                 fwrite(&a, 1, 1, file);
                 fwrite(&a, 1, 1, file);
                 fwrite(&a, 1, 1, file);
@@ -277,16 +285,16 @@ void savePPMTest(char *filename, int size){
 int main()
 {
     srand(time(NULL));
-//    saveSpiralPPM("pruebaEspiral100x100.ppm", 100);
+//    savePPMConcentricSquares("pruebaEspiral100x100.ppm", 100);
 //    saveSpiralPPM("pruebaEspiral10x10.ppm", 10);
 //    saveSpiralPPM("pruebaEspiral1000x1000.ppm", 1000);
 //    saveSpiralPPM("32x33.ppm", 32);
 //    savePPMMultipleSpiral2("test.ppm", 8, 2);
 
-    //int s = savePPMMultipleConcentricSquares("test.ppm", 100);
-    //savePPMConcentricCircles("prueba.ppm", 100);
-    //savePPMMultipleConcentricCircles("pruebaMultiple.ppm", 1000);
-    savePPMMultipleX("multipleX.ppm", 8);
+    savePPMMultipleConcentricSquares("test.ppm", 100, MINSLICES/2 - 3);
+//    savePPMConcentricCircles("prueba.ppm", 1000);
+    savePPMMultipleConcentricCircles("pruebaMultiple.ppm", 1000);
+//    savePPMMultipleX("multipleX.ppm", 100);
     for(int i = 0; i < 8;i++){
         for(int j = 0;j < 8;j++){
             if(j != 0) printf(" ");
