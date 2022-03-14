@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #define MAXRGB 256
-#define MINSLICES 10
+#define MINSLICES 2
 #define PI 3.141592
 
 void savePPMConcentricSquares(char *filename, int size){
@@ -285,24 +285,12 @@ void savePPMTest(char *filename, int size){
 int main()
 {
     srand(time(NULL));
-//    savePPMConcentricSquares("pruebaEspiral100x100.ppm", 100);
-//    saveSpiralPPM("pruebaEspiral10x10.ppm", 10);
-//    saveSpiralPPM("pruebaEspiral1000x1000.ppm", 1000);
-//    saveSpiralPPM("32x33.ppm", 32);
-//    savePPMMultipleSpiral2("test.ppm", 8, 2);
-
-    savePPMMultipleConcentricSquares("test.ppm", 100, MINSLICES/2 - 3);
-//    savePPMConcentricCircles("prueba.ppm", 1000);
-    savePPMMultipleConcentricCircles("pruebaMultiple.ppm", 1000);
-//    savePPMMultipleX("multipleX.ppm", 100);
-    for(int i = 0; i < 8;i++){
-        for(int j = 0;j < 8;j++){
-            if(j != 0) printf(" ");
-            if(i == j || 8 - i - 1== j)
-                printf("1");
-            else printf("0");
-        }
-        printf("\n");
-    }
+    savePPMConcentricSquares("Jesus34.ppm", 34);
+    savePPMConcentricSquares("Jesus3400.ppm", 3400);
+    savePPMConcentricCircles("circulos.ppm", 429);
+    savePPMMultipleConcentricSquares("Judas34.ppm", 34, 2);
+    savePPMMultipleConcentricSquares("Judas3400.ppm", 3400, 2);
+    savePPMMultipleConcentricCircles("Mciruculos.ppm", 2100);
+    savePPMMultipleX("Xtochas.ppm", 1000);
     return 0;
 }
