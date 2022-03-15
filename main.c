@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <time.h>
 #define MAXRGB 256
 #define MINSLICES 10
@@ -246,6 +247,60 @@ int savePPMMultipleX(char *filename, int size){
     return slices;
 }
 
+void loco(char *filename, int size){
+       FILE *file = fopen(filename, "wb");
+
+    if(file == NULL)
+        return;
+
+    char R[size];
+    for(int i = 0; i < size;i++)
+        R[i] = rand() % MAXRGB;
+
+    char G[size];
+    for(int i = 0; i < size;i++)
+        G[i] = rand() % MAXRGB;
+
+    char B[size];
+    for(int i = 0; i < size;i++)
+        B[i] = rand() % MAXRGB;
+
+    fprintf(file, "P6 %d %d %d\n", size, size, MAXRGB - 1);
+    for(int i = 0; i < size; i++){
+        for(int j = 0; j < size; j++){
+            int depth = 0;
+            while(i != depth && j != depth &&
+                  i != size - 1 - depth && j != size - depth - 1){
+                depth++;
+            }
+            int r = 0;
+            int vali = i - size / 2;
+            int valj = j - size / 2;
+            while(vali * vali + valj * valj >= r * r){
+                r++;
+            }
+            r--;
+            if(2 * r == (size - depth * 2) * (size - depth * 2)){
+                fwrite(&R[depth], 1, 1, file);
+                fwrite(&G[depth], 1, 1, file);
+                fwrite(&B[depth], 1, 1, file);
+            }else {
+                if(2 * r < (size - depth * 2) * (size - depth * 2)){
+                    char a = 0;
+                    fwrite(&a, 1, 1, file);
+                    fwrite(&a, 1, 1, file);
+                    fwrite(&a, 1, 1, file);
+                }else {
+                    fwrite(&R[r], 1, 1, file);
+                    fwrite(&G[r], 1, 1, file);
+                    fwrite(&B[r], 1, 1, file);
+                }
+            }
+        }
+    }
+    fclose(file);
+}
+
 void savePPMTest(char *filename, int size){
     FILE *file = fopen(filename, "wb");
 
@@ -285,24 +340,6 @@ void savePPMTest(char *filename, int size){
 int main()
 {
     srand(time(NULL));
-//    savePPMConcentricSquares("pruebaEspiral100x100.ppm", 100);
-//    saveSpiralPPM("pruebaEspiral10x10.ppm", 10);
-//    saveSpiralPPM("pruebaEspiral1000x1000.ppm", 1000);
-//    saveSpiralPPM("32x33.ppm", 32);
-//    savePPMMultipleSpiral2("test.ppm", 8, 2);
-
-    savePPMMultipleConcentricSquares("test.ppm", 100, MINSLICES/2 - 3);
-//    savePPMConcentricCircles("prueba.ppm", 1000);
-    savePPMMultipleConcentricCircles("pruebaMultiple.ppm", 1000);
-//    savePPMMultipleX("multipleX.ppm", 100);
-    for(int i = 0; i < 8;i++){
-        for(int j = 0;j < 8;j++){
-            if(j != 0) printf(" ");
-            if(i == j || 8 - i - 1== j)
-                printf("1");
-            else printf("0");
-        }
-        printf("\n");
-    }
+    loco("loco.ppm", 101);
     return 0;
 }
