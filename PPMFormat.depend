@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1647262700 source:c:\proyectos propios\ppmformat\main.c
+1647881479 source:c:\proyectos propios\ppmformat\main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdbool.h>

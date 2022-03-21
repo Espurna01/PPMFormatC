@@ -128,7 +128,7 @@ void savePPMConcentricCircles(char *filename, int size){
             int r = 0;
             int vali = i - size / 2;
             int valj = j - size / 2;
-            while(vali * vali + valj * valj >= r * r){
+            while((vali) * (vali) + (valj) * (valj) >= r * r || (vali) * (vali) + (valj) * (valj) >= r  * r){
                 r++;
             }
             r--;
@@ -247,8 +247,8 @@ int savePPMMultipleX(char *filename, int size){
     return slices;
 }
 
-void loco(char *filename, int size){
-       FILE *file = fopen(filename, "wb");
+void loco(char *filename, int size, int width){
+    FILE *file = fopen(filename, "wb");
 
     if(file == NULL)
         return;
@@ -268,34 +268,33 @@ void loco(char *filename, int size){
     fprintf(file, "P6 %d %d %d\n", size, size, MAXRGB - 1);
     for(int i = 0; i < size; i++){
         for(int j = 0; j < size; j++){
-            int depth = 0;
-            while(i != depth && j != depth &&
-                  i != size - 1 - depth && j != size - depth - 1){
-                depth++;
-            }
             int r = 0;
             int vali = i - size / 2;
             int valj = j - size / 2;
-            while(vali * vali + valj * valj >= r * r){
+            while(((vali) * (vali + width) + (valj) * (valj) >= r * r && (vali) * (vali - width) + (valj) * (valj) >= r  * r) ||
+                   ((vali) * (vali) + (valj) * (valj + width) >= r * r && (vali) * (vali) + (valj) * (valj - width) >= r  * r)){
                 r++;
             }
             r--;
-            if(2 * r == (size - depth * 2) * (size - depth * 2)){
-                fwrite(&R[depth], 1, 1, file);
-                fwrite(&G[depth], 1, 1, file);
-                fwrite(&B[depth], 1, 1, file);
-            }else {
-                if(2 * r < (size - depth * 2) * (size - depth * 2)){
-                    char a = 0;
-                    fwrite(&a, 1, 1, file);
-                    fwrite(&a, 1, 1, file);
-                    fwrite(&a, 1, 1, file);
-                }else {
-                    fwrite(&R[r], 1, 1, file);
-                    fwrite(&G[r], 1, 1, file);
-                    fwrite(&B[r], 1, 1, file);
+            if(r > size || r < 0){
+                char r = 100;
+                char b = 0;
+                char g = 0;
+                if (valj < 0){
+                    b = 100;
                 }
+                if (vali < 0) {
+                    g = 100;
+                }
+                fwrite(&r, 1, 1, file);
+                fwrite(&b, 1, 1, file);
+                fwrite(&g, 1, 1, file);
+            }else {
+                fwrite(&R[r], 1, 1, file);
+                fwrite(&G[r], 1, 1, file);
+                fwrite(&B[r], 1, 1, file);
             }
+
         }
     }
     fclose(file);
@@ -340,6 +339,6 @@ void savePPMTest(char *filename, int size){
 int main()
 {
     srand(time(NULL));
-    loco("loco.ppm", 101);
+    loco("pruebasCirculoAncho.ppm", 300, 150);
     return 0;
 }
